@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:navaran_project/const/shape/border_radius.dart';
 import 'package:navaran_project/const/shape/media_query.dart';
 import 'package:navaran_project/const/theme/colors.dart';
+import 'package:navaran_project/features/public_features/screen/bottom_nav_bar_screen.dart';
 
 class NullLocationWidget extends StatefulWidget {
   const NullLocationWidget({super.key});
@@ -14,13 +15,29 @@ class NullLocationWidget extends StatefulWidget {
   State<NullLocationWidget> createState() => _NullLocationWidgetState();
 }
 
-class _NullLocationWidgetState extends State<NullLocationWidget> {
+class _NullLocationWidgetState extends State<NullLocationWidget>
+    with WidgetsBindingObserver {
   String locationError = 'لوکیشن شما یافت نشد !';
+  bool _navigate = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkLocation();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkLocation();
+    }
   }
 
   Future<void> _checkLocation() async {
@@ -33,13 +50,24 @@ class _NullLocationWidgetState extends State<NullLocationWidget> {
         await Geolocator.requestPermission();
         break;
       case LocationPermission.unableToDetermine:
+        print('location not found');
         setState(() {
           locationError = 'لوکیشن غیر قابل رویت !';
         });
         break;
       case LocationPermission.whileInUse:
-        break;
       case LocationPermission.always:
+        if (!_navigate && mounted) {
+          _navigate = true;
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            BottomNavBarScreen.screenId,
+            (route) => false,
+          );
+        }
+        setState(() {
+          locationError = 'لوکیشن شما فعال شد !';
+        });
         break;
     }
   }
@@ -78,6 +106,7 @@ class _NullLocationWidgetState extends State<NullLocationWidget> {
                   ),
                   onPressed: () async {
                     await Geolocator.openLocationSettings();
+                    _checkLocation();
                   },
                   child: Text(
                     'فعالسازی لوکیشن',

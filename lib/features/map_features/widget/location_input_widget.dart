@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:navaran_project/const/theme/colors.dart';
 
 Widget buildLocationInput({
   required IconData icon,
@@ -16,16 +17,20 @@ Widget buildLocationInput({
           color: Colors.grey[200],
           borderRadius: BorderRadius.circular(10.r),
         ),
-        child: Row(
+        child: Column(
           children: [
-            Icon(icon, color: Colors.grey[700]),
-            SizedBox(width: 8.sp),
-            Expanded(
-              child: Text(
-                hint,
-                style: TextStyle(color: Colors.grey[700], fontSize: 14.sp),
-                overflow: TextOverflow.ellipsis,
-              ),
+            Row(
+              children: [
+                Icon(icon, color: primary2Color),
+                SizedBox(width: 8.sp),
+                Expanded(
+                  child: Text(
+                    hint,
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14.sp , fontFamily: 'peyda'),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

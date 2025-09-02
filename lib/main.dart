@@ -10,10 +10,13 @@ import 'package:navaran_project/features/home_features/screen/home_screen.dart';
 import 'package:navaran_project/features/intro_features/logic/intro_cubit.dart';
 import 'package:navaran_project/features/intro_features/screen/intro_screen.dart';
 import 'package:navaran_project/features/intro_features/screen/splash_screen.dart';
+import 'package:navaran_project/features/map_features/logic/req_new_trip_bloc.dart';
+import 'package:navaran_project/features/map_features/services/new_trip_api_repository.dart';
 import 'package:navaran_project/features/public_features/logic/bottom_nav/bottom_nav_cubit.dart';
 
 import 'features/auth_features/screen/auth_screen.dart';
 import 'features/auth_features/screen/code_validation_screen.dart';
+import 'features/finding_driver_features/screen/finding_driver_screen.dart';
 import 'features/map_features/screen/map_screen.dart';
 import 'features/public_features/screen/bottom_nav_bar_screen.dart';
 import 'features/public_features/widget/loading_states_widget.dart';
@@ -27,7 +30,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -37,6 +39,9 @@ class MyApp extends StatelessWidget {
               BlocProvider(create: (context) => IntroCubit()),
               BlocProvider(create: (context) => OtpBloc(OtpRepository())),
               BlocProvider(create: (context) => BottomNavCubit()),
+              BlocProvider(
+                create: (context) => ReqNewTripBloc(NewTripApiRepository()),
+              ),
             ],
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -47,19 +52,44 @@ class MyApp extends StatelessWidget {
               ],
               supportedLocales: const [Locale('fa')],
               routes: {
-                SplashScreen.screenId: (context) => SplashScreen(),
-                BottomNavBarScreen.screenId: (context) => BottomNavBarScreen(),
-                AuthScreen.screenId: (context) => AuthScreen(),
-                IntroScreen.screenId: (context) => IntroScreen(),
-                MapScreen.screenId: (context) => MapScreen(),
-                HomeScreen.screenId: (context) => HomeScreen(),
+                SplashScreen.screenId: (context) => const SplashScreen(),
+                BottomNavBarScreen.screenId:
+                    (context) => const BottomNavBarScreen(),
+                AuthScreen.screenId: (context) => const AuthScreen(),
+                IntroScreen.screenId: (context) => const IntroScreen(),
+                MapScreen.screenId: (context) => const MapScreen(),
+                HomeScreen.screenId: (context) => const HomeScreen(),
                 CodeValidationScreen.screenId:
-                    (context) => CodeValidationScreen(),
-                NullLocationWidget.screenId: (context) => NullLocationWidget(),
-                LoadingStatesWidget.screenId:
-                    (context) => LoadingStatesWidget(stuffObjectName: '',),
+                    (context) => const CodeValidationScreen(),
+                NullLocationWidget.screenId:
+                    (context) => const NullLocationWidget(),
+                FindingDriverScreen.screenId:
+                    (context) => const FindingDriverScreen(),
+                LoadingStatesWidget.screenId: (context) {
+                  final args =
+                      ModalRoute.of(context)!.settings.arguments
+                          as Map<String, dynamic>?;
+                  return LoadingStatesWidget(
+                    stuffObjectName: args?['stuffObjectName'] ?? '',
+                  );
+                },
               },
-              initialRoute: MapScreen.screenId,
+              // onGenerateRoute: (settings) {
+              //   switch (settings.name) {
+              //     case FindingDriverScreen.screenId:
+              //       final args = settings.arguments as Map<String, dynamic>?;
+              //       return MaterialPageRoute(
+              //         builder: (context) => FindingDriverScreen(
+              //           tripId: args?['tripId'] ?? '',
+              //           state: args?['state'] ?? '',
+              //         ),
+              //       );
+              //     default:
+              //       return null;
+              //   }
+              // },
+              initialRoute:
+                  MapScreen.screenId, // بهتر است splash screen اول باشد
             ),
           ),
     );
