@@ -47,14 +47,15 @@ Widget buildServiceCard({
               borderRadius: getBorderRadiusFunc(10),
             ),
             child: Text(
-              getPriceFormat(price.toStringAsFixed(0)),
+              getPriceFormat(price.toString()),
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'peyda',
-                  fontSize: 15.sp
+                color: Colors.white,
+                fontFamily: 'peyda',
+                fontSize: 15.sp,
               ),
             ),
+
           ),
         ],
       ),

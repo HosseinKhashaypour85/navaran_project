@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:navaran_project/features/auth_features/logic/otp_bloc.dart';
 import 'package:navaran_project/features/auth_features/services/otp_repository.dart';
+import 'package:navaran_project/features/driver_founded_info/screen/driver_founded_screen.dart';
 import 'package:navaran_project/features/home_features/screen/home_screen.dart';
 import 'package:navaran_project/features/intro_features/logic/intro_cubit.dart';
 import 'package:navaran_project/features/intro_features/screen/intro_screen.dart';
@@ -65,6 +66,8 @@ class MyApp extends StatelessWidget {
                     (context) => const NullLocationWidget(),
                 FindingDriverScreen.screenId:
                     (context) => const FindingDriverScreen(),
+                DriverFoundedScreen.screenId:
+                    (context) => const DriverFoundedScreen(),
                 LoadingStatesWidget.screenId: (context) {
                   final args =
                       ModalRoute.of(context)!.settings.arguments

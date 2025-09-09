@@ -3,17 +3,82 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:navaran_project/const/shape/border_radius.dart';
 import 'package:navaran_project/const/shape/media_query.dart';
 import 'package:navaran_project/const/theme/colors.dart';
+import 'package:navaran_project/features/driver_founded_info/screen/driver_founded_screen.dart';
+import 'package:navaran_project/features/map_features/screen/map_screen.dart';
 import 'package:navaran_project/features/public_features/functions/pre_values/pre_values.dart';
+import 'package:navaran_project/features/public_features/widget/snack_bar_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../driver_founded_info/function/drivers_id_list_func.dart';
+import '../../driver_founded_info/model/driver_model.dart';
 
 class FindingDriverScreen extends StatefulWidget {
   const FindingDriverScreen({super.key});
 
   static const String screenId = 'finding_driver';
+
   @override
   State<FindingDriverScreen> createState() => _FindingDriverScreenState();
 }
 
 class _FindingDriverScreenState extends State<FindingDriverScreen> {
+  bool isLoading = false;
+  DriversIdListFunc driversIdListFunc = DriversIdListFunc();
+
+  void selectTheDriver() async {
+    DriverModel? randomDriver = await driversIdListFunc.selectRandomDriver();
+    if (randomDriver == null) {
+      print('راننده ای در دسترس نیست');
+    } else {
+      print(
+        'name : ${randomDriver.name} , phone : ${randomDriver.phone} , car : ${randomDriver.carModel} , plate : ${randomDriver.licensePlate} , code : ${randomDriver.cityCode} , alphabet : ${randomDriver.cityCode}',
+      );
+    }
+  }
+
+  // save driver info
+  Future<void> _saveDriverInfo(DriverModel driver) async {
+    final prefs = await SharedPreferences.getInstance();
+    // await prefs.setString('driver_id', driver.id.toString());
+    await prefs.setString('driver_name', driver.name);
+    await prefs.setString('driver_phone', driver.phone);
+    await prefs.setString('driver_carModel', driver.carModel);
+    await prefs.setString('driver_plate', driver.licensePlate);
+    await prefs.setString('driver_cityCode', driver.cityCode);
+    await prefs.setString('driver_alphaBet', driver.alphaBet);
+  }
+
+  // get driver Info
+  Future<DriverModel?> getDriverInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final driverName = prefs.getString('driver_name');
+    final driverPhone = prefs.getString('driver_phone');
+    final driverCar = prefs.getString('driver_carModel');
+    final driverCity = prefs.getString('driver_cityCode');
+    final driverAlphaBet = prefs.getString('driver_alphaBet');
+    final driverPlate = prefs.getString('driver_plate');
+
+    // بررسی کنید که تمام فیلدهای مورد نیاز غیر null باشند
+    if (driverName != null &&
+        driverPhone != null &&
+        driverCar != null &&
+        driverCity != null &&
+        driverAlphaBet != null &&
+        driverPlate != null) {
+      return DriverModel(
+        id: 1,
+        // اگر ID از SharedPreferences دریافت نمی‌شود، مقدار پیش‌فرض
+        name: driverName,
+        phone: driverPhone,
+        carModel: driverCar,
+        licensePlate: driverPlate,
+        cityCode: driverCity,
+        alphaBet: driverAlphaBet,
+      );
+    }
+    return null;
+  }
+
   Future<void> showModalBottomSheetWidget(BuildContext context) {
     return showModalBottomSheet(
       context: context,
@@ -100,7 +165,20 @@ class _FindingDriverScreenState extends State<FindingDriverScreen> {
                   Expanded(
                     child: _outlinedButton(
                       'لغو درخواست',
-                      () => Navigator.pop(context),
+                      () {
+                        getSnackBarWidget(
+                          context,
+                          'درحال درخواست برای لغو سفر',
+                          Colors.redAccent,
+                        );
+                        Future.delayed(Duration(seconds: 3), () {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            MapScreen.screenId,
+                            (route) => false,
+                          );
+                        });
+                      },
                       Colors.red,
                       context,
                     ),
@@ -173,11 +251,51 @@ class _FindingDriverScreenState extends State<FindingDriverScreen> {
     );
   }
 
+  Future<void> navigate() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    DriverModel? randomDriver = await DriversIdListFunc().selectRandomDriver();
+
+    if (randomDriver == null) {
+      setState(() {
+        isLoading = false;
+      });
+      getSnackBarWidget(context, "راننده‌ای یافت نشد", Colors.red);
+      return;
+    }
+
+    await _saveDriverInfo(randomDriver);
+
+    if (!mounted) {
+      print('Widget is not mounted, navigation cancelled');
+      return;
+    }
+    print('Navigating to DriverFoundedScreen');
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pushNamed(
+        context,
+        DriverFoundedScreen.screenId,
+        arguments: {'driverInfo': randomDriver},
+      );
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    navigate();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map<String , dynamic>?;
-    final tripId = arguments!['id'];
-    print(tripId);
+    final arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    final normalMoneyCost = arguments!['NormalMoneyCost'] ?? 0;
+    final vipMoneyCost = arguments!['VipMoneyCost'] ?? 0;
+    print(normalMoneyCost);
+    print(vipMoneyCost);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

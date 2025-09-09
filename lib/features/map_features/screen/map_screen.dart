@@ -10,6 +10,7 @@ import 'package:navaran_project/const/shape/media_query.dart';
 import 'package:navaran_project/const/theme/colors.dart';
 import 'package:navaran_project/features/finding_driver_features/screen/finding_driver_screen.dart';
 import 'package:navaran_project/features/map_features/logic/req_new_trip_bloc.dart';
+import 'package:navaran_project/features/map_features/pref/save_money_cost_pref.dart';
 import 'package:navaran_project/features/map_features/widget/discount_field_widget.dart';
 import 'package:navaran_project/features/map_features/widget/trip_options_widget.dart';
 import 'package:navaran_project/features/public_features/functions/navigator_animation/navigator_function.dart';
@@ -55,6 +56,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
+    _loadSavedPrices();
     _determinePosition();
   }
 
@@ -133,7 +135,7 @@ class _MapScreenState extends State<MapScreen> {
       final distanceMeters = response.data['routes'][0]['distance'];
       final durationSeconds = response.data['routes'][0]['duration'];
 
-      // Calculate prices
+      // قیمت پایه
       double normalBaseFare = 20000;
       double normalPricePerKm = 5000;
       double normalPricePerMin = 1000;
@@ -143,8 +145,8 @@ class _MapScreenState extends State<MapScreen> {
 
       double normalTotalPrice =
           normalBaseFare +
-          (distanceKm * normalPricePerKm) +
-          (durationMin * normalPricePerMin);
+              (distanceKm * normalPricePerKm) +
+              (durationMin * normalPricePerMin);
 
       double vipBaseFare = 50000;
       double vipPricePerKm = 20000;
@@ -152,17 +154,34 @@ class _MapScreenState extends State<MapScreen> {
 
       double vipTotalPrice =
           vipBaseFare +
-          (distanceKm * vipPricePerKm) +
-          (durationMin * vipPricePerMin);
+              (distanceKm * vipPricePerKm) +
+              (durationMin * vipPricePerMin);
 
-      setState(() {
-        normalTripPrice = normalTotalPrice;
-        vipTripPrice = vipTotalPrice;
-      });
+      // اول ذخیره کن
+      await SaveMoneyCostPref().setNormalTripMoneyCost(normalTotalPrice);
+      await SaveMoneyCostPref().setVipTripMoneyCost(vipTotalPrice);
+
+      // بعد state رو تغییر بده
+      if (mounted) {
+        setState(() {
+          normalTripPrice = normalTotalPrice;
+          vipTripPrice = vipTotalPrice;
+        });
+      }
     } on DioException catch (e) {
       print(e);
       getSnackBarWidget(context, 'خطا در محاسبه قیمت', Colors.red);
     }
+  }
+
+
+  Future<void> _loadSavedPrices() async {
+    final normal = await SaveMoneyCostPref().getNormalTripMoneyCost();
+    final vip = await SaveMoneyCostPref().getVipTripMoneyCost();
+    setState(() {
+      normalTripPrice = normal != 0 ? normal : null;
+      vipTripPrice = vip != 0 ? vip : null;
+    });
   }
 
   Future<void> showModalBottomNav(BuildContext context) {
