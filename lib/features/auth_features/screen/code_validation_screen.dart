@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:navaran_project/const/theme/colors.dart';
 import 'package:navaran_project/features/auth_features/widget/otp_input.dart';
+import 'package:navaran_project/features/home_features/screen/home_screen.dart';
+import 'package:navaran_project/features/public_features/functions/navigator_animation/navigator_function.dart';
 import 'package:navaran_project/features/public_features/functions/pref/save_phone_number.dart';
+import 'package:navaran_project/features/public_features/screen/bottom_nav_bar_screen.dart';
 import 'package:navaran_project/features/public_features/widget/snack_bar_widget.dart';
 
 import '../../../const/shape/border_radius.dart';
@@ -44,7 +47,7 @@ class _CodeValidationScreenState extends State<CodeValidationScreen> {
         onPressed: () {
           bool isValid = controllers.every((controller)=> controller.text.isNotEmpty);
           if(isValid){
-          //   navigator
+            navigateWithFadeAndRemoveAll(context, BottomNavBarScreen());
             getSnackBarWidget(context, 'ورود موفقیت آمیز بود!', Colors.green);
           } else{
             getSnackBarWidget(context, 'خطا در ورود !', Colors.red);
@@ -77,7 +80,7 @@ class _CodeValidationScreenState extends State<CodeValidationScreen> {
               Container(
                 margin: EdgeInsets.all(10.sp),
                 padding: EdgeInsets.all(5.sp),
-                child: OtpInputWidget(),
+                child: OtpInputWidget(controllers: controllers,),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),

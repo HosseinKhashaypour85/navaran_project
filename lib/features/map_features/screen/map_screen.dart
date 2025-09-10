@@ -14,6 +14,7 @@ import 'package:navaran_project/features/map_features/pref/save_money_cost_pref.
 import 'package:navaran_project/features/map_features/widget/discount_field_widget.dart';
 import 'package:navaran_project/features/map_features/widget/trip_options_widget.dart';
 import 'package:navaran_project/features/public_features/functions/navigator_animation/navigator_function.dart';
+import 'package:navaran_project/features/public_features/functions/pref/save_phone_number.dart';
 import 'package:navaran_project/features/public_features/functions/price_format/price_format_function.dart';
 import 'package:navaran_project/features/public_features/screen/bottom_nav_bar_screen.dart';
 import 'package:navaran_project/features/public_features/widget/loading_states_widget.dart';
@@ -145,8 +146,8 @@ class _MapScreenState extends State<MapScreen> {
 
       double normalTotalPrice =
           normalBaseFare +
-              (distanceKm * normalPricePerKm) +
-              (durationMin * normalPricePerMin);
+          (distanceKm * normalPricePerKm) +
+          (durationMin * normalPricePerMin);
 
       double vipBaseFare = 50000;
       double vipPricePerKm = 20000;
@@ -154,8 +155,8 @@ class _MapScreenState extends State<MapScreen> {
 
       double vipTotalPrice =
           vipBaseFare +
-              (distanceKm * vipPricePerKm) +
-              (durationMin * vipPricePerMin);
+          (distanceKm * vipPricePerKm) +
+          (durationMin * vipPricePerMin);
 
       // اول ذخیره کن
       await SaveMoneyCostPref().setNormalTripMoneyCost(normalTotalPrice);
@@ -173,7 +174,6 @@ class _MapScreenState extends State<MapScreen> {
       getSnackBarWidget(context, 'خطا در محاسبه قیمت', Colors.red);
     }
   }
-
 
   Future<void> _loadSavedPrices() async {
     final normal = await SaveMoneyCostPref().getNormalTripMoneyCost();
@@ -274,9 +274,10 @@ class _MapScreenState extends State<MapScreen> {
           Navigator.pushNamedAndRemoveUntil(
             context,
             FindingDriverScreen.screenId,
-                (route) => false, // این خط تمام صفحات قبلی را پاک می‌کند
+            (route) => false, // این خط تمام صفحات قبلی را پاک می‌کند
             arguments: {
-              'id': state.newTripModel.trips?.first.id, // استفاده از اولین trip در لیست
+              'id': state.newTripModel.trips?.first.id,
+              // استفاده از اولین trip در لیست
               'state': 'tryToFind',
             },
           );
@@ -587,12 +588,15 @@ class _MapScreenState extends State<MapScreen> {
                             onPressed:
                                 state is ReqNewTripLoadingState
                                     ? null
-                                    : () {
+                                    : () async {
+                                      final phoneNumber =
+                                          await SavePhoneNumber()
+                                              .getPhoneNumber();
                                       if (destinationPosition != null &&
                                           destination.isNotEmpty) {
                                         context.read<ReqNewTripBloc>().add(
                                           CallReqNewTrip(
-                                            passengerId: '09121000892',
+                                            passengerId: phoneNumber ?? '0',
                                             // Replace with actual user ID
                                             origin: origin,
                                             destination: destination,

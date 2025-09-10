@@ -59,6 +59,7 @@ dependencies:
   flutter_map: ^8.2.1
   go_router: ^15.1.2
   shamsi_date: ^1.1.0
+  webview_flutter: ^4.13.0
   flutter_localizations:
     sdk: flutter
   intl: any
@@ -96,6 +97,10 @@ flutter:
      - assets/images/car2.png
      - assets/images/dontknow.png
      - assets/images/cancel.png
+     - assets/images/hotel.png
+     - assets/images/tourism.png
+     - assets/images/restaurant.png
+     - assets/images/online-shop.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

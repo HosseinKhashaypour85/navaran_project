@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:navaran_project/features/home_features/screen/home_screen.dart';
+import 'package:navaran_project/features/profile_features/screen/profile_screen.dart';
 
 import '../../../const/theme/colors.dart';
 import '../logic/bottom_nav/bottom_nav_cubit.dart';
@@ -16,9 +17,9 @@ class BottomNavBarScreen extends StatefulWidget {
 
 class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
   List<Widget> screenList = [
+  HomeScreen(),
   Container(),
-  Container(),
-  Container(),
+  ProfileScreen(),
   ];
 
   // @override

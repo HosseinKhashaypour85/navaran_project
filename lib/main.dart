@@ -13,15 +13,20 @@ import 'package:navaran_project/features/intro_features/screen/intro_screen.dart
 import 'package:navaran_project/features/intro_features/screen/splash_screen.dart';
 import 'package:navaran_project/features/map_features/logic/req_new_trip_bloc.dart';
 import 'package:navaran_project/features/map_features/services/new_trip_api_repository.dart';
+import 'package:navaran_project/features/payment_screen/screen/payment_screen.dart';
+import 'package:navaran_project/features/profile_features/screen/profile_screen.dart';
 import 'package:navaran_project/features/public_features/logic/bottom_nav/bottom_nav_cubit.dart';
 
 import 'features/auth_features/screen/auth_screen.dart';
 import 'features/auth_features/screen/code_validation_screen.dart';
 import 'features/finding_driver_features/screen/finding_driver_screen.dart';
+import 'features/home_features/widget/webviews_screen.dart';
 import 'features/map_features/screen/map_screen.dart';
+import 'features/payment_screen/screen/paymentwebview_screen.dart';
 import 'features/public_features/screen/bottom_nav_bar_screen.dart';
 import 'features/public_features/widget/loading_states_widget.dart';
 import 'features/public_features/widget/null_location_widget.dart';
+import 'features/settings_features/screen/settings_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -68,6 +73,12 @@ class MyApp extends StatelessWidget {
                     (context) => const FindingDriverScreen(),
                 DriverFoundedScreen.screenId:
                     (context) => const DriverFoundedScreen(),
+                PaymentScreen.screenId:
+                    (context) => const PaymentScreen(),
+                PaymentSWebViewScreen.screenId: (context) => const PaymentSWebViewScreen(),
+                ProfileScreen.screenId: (context) => const ProfileScreen(),
+                SettingsScreen.screenId: (context) => const SettingsScreen(),                CustomWebViews.screenId: (context) => const CustomWebViews(),
+
                 LoadingStatesWidget.screenId: (context) {
                   final args =
                       ModalRoute.of(context)!.settings.arguments
@@ -92,7 +103,7 @@ class MyApp extends StatelessWidget {
               //   }
               // },
               initialRoute:
-                  MapScreen.screenId, // بهتر است splash screen اول باشد
+                  BottomNavBarScreen.screenId, // بهتر است splash screen اول باشد
             ),
           ),
     );

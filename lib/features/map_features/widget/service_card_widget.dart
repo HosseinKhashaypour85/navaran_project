@@ -27,9 +27,11 @@ Widget buildServiceCard({
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Image.asset(
-            imagePath,
-            width: getWidth(context, 0.19.sp),
+          Flexible(
+            child: Image.asset(
+              imagePath,
+              width: getWidth(context, 0.19.sp),
+            ),
           ),
           Text(
             title,

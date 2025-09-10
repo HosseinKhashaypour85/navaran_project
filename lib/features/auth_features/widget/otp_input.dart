@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class OtpInputWidget extends StatefulWidget {
-  const OtpInputWidget({super.key});
+  final List<TextEditingController> controllers; // بیرون می‌گیریم
+
+  const OtpInputWidget({super.key, required this.controllers});
 
   @override
   State<OtpInputWidget> createState() => _OtpInputWidgetState();
@@ -9,21 +11,16 @@ class OtpInputWidget extends StatefulWidget {
 
 class _OtpInputWidgetState extends State<OtpInputWidget> {
   final int fieldLength = 6;
-  late List<TextEditingController> _controllers;
   late List<FocusNode> _focusNodes;
 
   @override
   void initState() {
     super.initState();
-    _controllers = List.generate(fieldLength, (index) => TextEditingController());
     _focusNodes = List.generate(fieldLength, (index) => FocusNode());
   }
 
   @override
   void dispose() {
-    for (var c in _controllers) {
-      c.dispose();
-    }
     for (var f in _focusNodes) {
       f.dispose();
     }
@@ -47,7 +44,7 @@ class _OtpInputWidgetState extends State<OtpInputWidget> {
         return SizedBox(
           width: 55,
           child: TextField(
-            controller: _controllers[index],
+            controller: widget.controllers[index],
             focusNode: _focusNodes[index],
             maxLength: 1,
             textAlign: TextAlign.center,

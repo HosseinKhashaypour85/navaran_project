@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:navaran_project/features/home_features/screen/home_screen.dart';
 import 'package:navaran_project/features/map_features/pref/save_money_cost_pref.dart';
+import 'package:navaran_project/features/payment_screen/screen/payment_screen.dart';
 import 'package:navaran_project/features/public_features/functions/navigator_animation/navigator_function.dart';
 import 'package:navaran_project/features/public_features/functions/price_format/price_format_function.dart';
 import 'package:navaran_project/features/public_features/screen/bottom_nav_bar_screen.dart';
@@ -129,7 +130,7 @@ class _DriverFoundedScreenState extends State<DriverFoundedScreen>
   }
 
   Future<void>_tripEnded()async{
-    Future.delayed(Duration(minutes: 1), () {
+    Future.delayed(Duration(minutes: 2), () {
       getSnackBarWidget(context, 'سفر به پایان رسید', Colors.green);
       navigateWithFadeAndRemoveAll(context, BottomNavBarScreen());
     },);
@@ -342,8 +343,7 @@ class _DriverFoundedScreenState extends State<DriverFoundedScreen>
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            getSnackBarWidget(context,
-                                "پرداخت با موفقیت انجام شد ✅", Colors.green);
+                            Navigator.of(context).pushNamed(PaymentScreen.screenId);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue[700],
